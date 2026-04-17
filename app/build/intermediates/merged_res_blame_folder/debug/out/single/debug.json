@@ -18,5 +18,9 @@
     {
         "merged": "com.tuapp.stockapp-merged_res-29:/layout_item_producto.xml.flat",
         "source": "com.tuapp.stockapp-main-31:/layout/item_producto.xml"
+    },
+    {
+        "merged": "com.tuapp.stockapp-merged_res-29:/drawable_logo_maxi.png.flat",
+        "source": "com.tuapp.stockapp-main-31:/drawable/logo_maxi.png"
     }
 ]

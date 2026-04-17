@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:2:1-20:12
-INJECTED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:2:1-20:12
-INJECTED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:2:1-20:12
-INJECTED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:2:1-20:12
+ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:2:1-22:12
+INJECTED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:2:1-22:12
+INJECTED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:2:1-22:12
+INJECTED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:2:1-22:12
 MERGED from [com.google.android.material:material:1.9.0] /home/juandaniel/.gradle/caches/transforms-3/f82244530b48b80b42b912ea2d0896ff/transformed/material-1.9.0/AndroidManifest.xml:17:1-26:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/juandaniel/.gradle/caches/transforms-3/1f371f754bd6786f9a76f8e2fd18482b/transformed/constraintlayout-2.1.4/AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /home/juandaniel/.gradle/caches/transforms-3/dd8395924473b069ee7a6f1edc69d57d/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:17:1-22:12
@@ -54,8 +54,8 @@ MERGED from [androidx.annotation:annotation-experimental:1.3.0] /home/juandaniel
 	xmlns:android
 		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:2:11-69
 application
-ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:4:5-18:19
-INJECTED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:4:5-18:19
+ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:4:5-20:19
+INJECTED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:4:5-20:19
 MERGED from [com.google.android.material:material:1.9.0] /home/juandaniel/.gradle/caches/transforms-3/f82244530b48b80b42b912ea2d0896ff/transformed/material-1.9.0/AndroidManifest.xml:24:5-20
 MERGED from [com.google.android.material:material:1.9.0] /home/juandaniel/.gradle/caches/transforms-3/f82244530b48b80b42b912ea2d0896ff/transformed/material-1.9.0/AndroidManifest.xml:24:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/juandaniel/.gradle/caches/transforms-3/1f371f754bd6786f9a76f8e2fd18482b/transformed/constraintlayout-2.1.4/AndroidManifest.xml:9:5-20
@@ -75,29 +75,33 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/juand
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.9.0] /home/juandaniel/.gradle/caches/transforms-3/a309491863f1cad1388d82071cb60f8c/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:7:9-35
+		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:9:9-35
 	android:label
-		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:6:9-41
+		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:7:9-41
+	android:roundIcon
+		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:8:9-48
+	android:icon
+		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:6:9-43
 	android:allowBackup
 		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:5:9-35
 	android:theme
-		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:8:9-46
+		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:10:9-46
 activity#com.tuapp.stockapp.ui.MainActivity
-ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:10:9-17:20
+ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:12:9-19:20
 	android:exported
-		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:12:13-36
+		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:14:13-36
 	android:name
-		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:11:13-44
+		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:13:13-44
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:13:13-16:29
+ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:15:13-18:29
 action#android.intent.action.MAIN
-ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:14:17-69
+ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:16:17-69
 	android:name
-		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:14:25-66
+		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:16:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:15:17-77
+ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:17:17-77
 	android:name
-		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:15:27-74
+		ADDED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml:17:27-74
 uses-sdk
 INJECTED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/juandaniel/Escritorio/ventas-maxi/ventas-local/app/src/main/AndroidManifest.xml

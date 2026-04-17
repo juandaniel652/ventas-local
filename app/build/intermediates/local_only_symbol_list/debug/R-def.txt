@@ -9,6 +9,7 @@ color surface_variant
 color text_high_emphasis
 color text_medium_emphasis
 color white
+drawable logo_maxi
 id btnBorrar
 id btnVender
 id etNombre
@@ -18,6 +19,7 @@ id fabAgregar
 id lvVentas
 id rvInventario
 id tabLayout
+id toolbar
 id tvNombre
 id tvPrecio
 id tvStock

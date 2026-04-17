@@ -6,6 +6,15 @@
     android:orientation="vertical"
     android:background="@color/bg_dark">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/surface_dark"
+        app:title="@string/app_name"
+        app:titleTextColor="@color/white"
+        app:logo="@drawable/logo_maxi" />
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
