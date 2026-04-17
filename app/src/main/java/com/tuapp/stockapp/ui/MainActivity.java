@@ -14,13 +14,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        TabLayout tl = findViewById(R.id.tabLayout);
+        ViewPager2 vp = findViewById(R.id.viewPager);
 
-        viewPager.setAdapter(new ViewPagerAdapter(this));
+        vp.setAdapter(new ViewPagerAdapter(this));
 
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            tab.setText(position == 0 ? "INVENTARIO" : "VENTAS HOY");
+        new TabLayoutMediator(tl, vp, (tab, position) -> {
+            if (position == 0) tab.setText("STOCK");
+            else if (position == 1) tab.setText("HOY");
+            else tab.setText("HISTORIAL");
         }).attach();
     }
 }

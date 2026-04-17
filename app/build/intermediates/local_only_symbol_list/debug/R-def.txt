@@ -1,22 +1,26 @@
 R_DEF: Internal format may change without notice
 local
-color backgroundGrey
-color colorAccent
-color colorPrimary
-color colorPrimaryDark
-color textDark
+color bg_dark
+color error_red
+color primary_accent
+color secondary_accent
+color surface_dark
+color surface_variant
+color text_high_emphasis
+color text_medium_emphasis
+color white
 id btnBorrar
 id btnVender
 id etNombre
 id etPrecio
 id etStock
 id fabAgregar
-id itemNombre
-id itemPrecio
-id itemStock
+id lvVentas
 id rvInventario
-id rvVentasDía
 id tabLayout
+id tvNombre
+id tvPrecio
+id tvStock
 id tvTotalHoy
 id viewPager
 layout activity_main
@@ -24,4 +28,5 @@ layout dialog_producto
 layout fragment_inventario
 layout fragment_ventas
 layout item_producto
-style AppTheme
+string app_name
+style Theme.StockApp

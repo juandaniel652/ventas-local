@@ -24,6 +24,15 @@ public class ProductoDAO {
         return db.insert("productos", null, v);
     }
 
+    public void actualizar(Producto p) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("nombre", p.getNombre());
+        v.put("stock", p.getStock());
+        v.put("precio", p.getPrecio());
+        db.update("productos", v, "id = ?", new String[]{String.valueOf(p.getId())});
+    }
+
     public void registrarVenta(int productoId, int cantidad, double total) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.execSQL("UPDATE productos SET stock = stock - " + cantidad + " WHERE id = " + productoId);

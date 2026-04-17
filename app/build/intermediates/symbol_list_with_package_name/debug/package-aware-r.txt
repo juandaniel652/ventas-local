@@ -1332,11 +1332,11 @@ color accent_material_dark
 color accent_material_light
 color androidx_core_ripple_material_light
 color androidx_core_secondary_text_default_material_light
-color backgroundGrey
 color background_floating_material_dark
 color background_floating_material_light
 color background_material_dark
 color background_material_light
+color bg_dark
 color bright_foreground_disabled_material_dark
 color bright_foreground_disabled_material_light
 color bright_foreground_inverse_material_dark
@@ -1349,9 +1349,6 @@ color cardview_dark_background
 color cardview_light_background
 color cardview_shadow_end_color
 color cardview_shadow_start_color
-color colorAccent
-color colorPrimary
-color colorPrimaryDark
 color design_bottom_navigation_shadow_color
 color design_box_stroke_color
 color design_dark_default_color_background
@@ -1396,6 +1393,7 @@ color dim_foreground_material_dark
 color dim_foreground_material_light
 color error_color_material_dark
 color error_color_material_light
+color error_red
 color foreground_material_dark
 color foreground_material_light
 color highlighted_text_material_dark
@@ -2025,6 +2023,7 @@ color mtrl_textinput_focused_box_stroke_color
 color mtrl_textinput_hovered_box_stroke_color
 color notification_action_color_filter
 color notification_icon_bg_color
+color primary_accent
 color primary_dark_material_dark
 color primary_dark_material_light
 color primary_material_dark
@@ -2035,19 +2034,24 @@ color primary_text_disabled_material_dark
 color primary_text_disabled_material_light
 color ripple_material_dark
 color ripple_material_light
+color secondary_accent
 color secondary_text_default_material_dark
 color secondary_text_default_material_light
 color secondary_text_disabled_material_dark
 color secondary_text_disabled_material_light
+color surface_dark
+color surface_variant
 color switch_thumb_disabled_material_dark
 color switch_thumb_disabled_material_light
 color switch_thumb_material_dark
 color switch_thumb_material_light
 color switch_thumb_normal_material_dark
 color switch_thumb_normal_material_light
-color textDark
+color text_high_emphasis
+color text_medium_emphasis
 color tooltip_background_dark
 color tooltip_background_light
+color white
 dimen abc_action_bar_content_inset_material
 dimen abc_action_bar_content_inset_with_nav
 dimen abc_action_bar_default_height_material
@@ -3235,9 +3239,6 @@ id invisible
 id inward
 id is_pooling_container_tag
 id italic
-id itemNombre
-id itemPrecio
-id itemStock
 id item_touch_helper_previous_elevation
 id jumpToEnd
 id jumpToStart
@@ -3251,6 +3252,7 @@ id line3
 id linear
 id listMode
 id list_item
+id lvVentas
 id m3_side_sheet
 id marquee
 id masked
@@ -3364,7 +3366,6 @@ id right_side
 id rounded
 id row_index_key
 id rvInventario
-id rvVentasDía
 id save_non_transition_alpha
 id save_overlay_view
 id sawtooth
@@ -3487,6 +3488,9 @@ id transition_position
 id transition_scene_layoutid_cache
 id transition_transform
 id triangle
+id tvNombre
+id tvPrecio
+id tvStock
 id tvTotalHoy
 id unchecked
 id uniform
@@ -3736,6 +3740,7 @@ string abc_shareactionprovider_share_with
 string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
 string androidx_startup
+string app_name
 string appbar_scrolling_view_behavior
 string bottom_sheet_behavior
 string bottomsheet_action_collapse
@@ -3875,7 +3880,6 @@ style Animation_Design_BottomSheetDialog
 style Animation_Material3_BottomSheetDialog
 style Animation_Material3_SideSheetDialog
 style Animation_MaterialComponents_BottomSheetDialog
-style AppTheme
 style Base_AlertDialog_AppCompat
 style Base_AlertDialog_AppCompat_Light
 style Base_Animation_AppCompat_Dialog
@@ -4483,6 +4487,7 @@ style Theme_MaterialComponents_Light_NoActionBar
 style Theme_MaterialComponents_Light_NoActionBar_Bridge
 style Theme_MaterialComponents_NoActionBar
 style Theme_MaterialComponents_NoActionBar_Bridge
+style Theme_StockApp
 style ThemeOverlay_AppCompat
 style ThemeOverlay_AppCompat_ActionBar
 style ThemeOverlay_AppCompat_Dark

@@ -3,37 +3,80 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp">
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="@color/surface_dark"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView android:id="@+id/itemNombre" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold"/>
-            <TextView android:id="@+id/itemStock" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Stock: 0" android:textColor="#E74C3C"/>
-            <TextView android:id="@+id/itemPrecio" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="$ 0.00" android:textColor="#27AE60"/>
-        </LinearLayout>
-
-        <Button android:id="@+id/btnVender"
+        <TextView
+            android:id="@+id/tvNombre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="VENDER"
-            android:backgroundTint="#3498DB"/>
-            
-        <ImageButton android:id="@+id/btnBorrar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@android:drawable/ic_menu_delete"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_marginLeft="8dp"/>
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_high_emphasis"
+            android:text="Producto" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/tvStock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stock: 0"
+                android:textColor="@color/text_medium_emphasis" />
+
+            <TextView
+                android:id="@+id/tvPrecio"
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$ 0.00"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary_accent" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/surface_variant"
+            android:layout_marginVertical="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnBorrar"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ELIMINAR"
+                android:textColor="@color/error_red" />
+
+            <Button
+                android:id="@+id/btnVender"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="VENDER"
+                app:backgroundTint="@color/primary_accent"
+                android:textColor="@color/bg_dark"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
