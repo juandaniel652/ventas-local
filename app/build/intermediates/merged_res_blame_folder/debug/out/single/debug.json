@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "com.tuapp.stockapp-merged_res-29:/layout_fragment_ventas.xml.flat",
+        "source": "com.tuapp.stockapp-main-31:/layout/fragment_ventas.xml"
+    },
+    {
+        "merged": "com.tuapp.stockapp-merged_res-29:/layout_activity_main.xml.flat",
+        "source": "com.tuapp.stockapp-main-31:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.tuapp.stockapp-merged_res-29:/layout_fragment_inventario.xml.flat",
+        "source": "com.tuapp.stockapp-main-31:/layout/fragment_inventario.xml"
+    },
+    {
+        "merged": "com.tuapp.stockapp-merged_res-29:/layout_dialog_producto.xml.flat",
+        "source": "com.tuapp.stockapp-main-31:/layout/dialog_producto.xml"
+    },
+    {
+        "merged": "com.tuapp.stockapp-merged_res-29:/layout_item_producto.xml.flat",
+        "source": "com.tuapp.stockapp-main-31:/layout/item_producto.xml"
+    }
+]

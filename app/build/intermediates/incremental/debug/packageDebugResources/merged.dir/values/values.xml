@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="backgroundGrey">#F5F5F5</color>
+    <color name="colorAccent">#27AE60</color>
+    <color name="colorPrimary">#2C3E50</color>
+    <color name="colorPrimaryDark">#1A252F</color>
+    <color name="textDark">#2C3E50</color>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#2C3E50</item>
+        <item name="colorPrimaryDark">#1A252F</item>
+        <item name="colorAccent">#27AE60</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>

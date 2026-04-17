@@ -9,57 +9,69 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductoDAO {
-    private SQLiteDatabase db;
-    private DatabaseHelper dbHelper;
+    private DbHelper dbHelper;
 
     public ProductoDAO(Context context) {
-        dbHelper = new DatabaseHelper(context);
+        dbHelper = new DbHelper(context);
     }
 
-    public void abrir() {
-        db = dbHelper.getWritableDatabase();
+    public long insertar(Producto p) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("nombre", p.getNombre());
+        v.put("stock", p.getStock());
+        v.put("precio", p.getPrecio());
+        return db.insert("productos", null, v);
     }
 
-    public void cerrar() {
-        dbHelper.close();
+    public void registrarVenta(int productoId, int cantidad, double total) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.execSQL("UPDATE productos SET stock = stock - " + cantidad + " WHERE id = " + productoId);
+        ContentValues v = new ContentValues();
+        v.put("producto_id", productoId);
+        v.put("cantidad", cantidad);
+        v.put("total", total);
+        db.insert("ventas", null, v);
     }
 
-    // INSERTAR O ACTUALIZAR (Para no perder datos)
-    public long guardarProducto(Producto producto) {
-        ContentValues values = new ContentValues();
-        values.put("nombre", producto.getNombre());
-        values.put("precio", producto.getPrecio());
-        values.put("stock", producto.getStock());
+    public double obtenerTotalVentasHoy() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT SUM(total) FROM ventas WHERE date(fecha) = date('now', 'localtime')", null);
+        double total = 0;
+        if (c.moveToFirst()) total = c.getDouble(0);
+        c.close();
+        return total;
+    }
 
-        if (producto.getId() > 0) {
-            return db.update("productos", values, "id = ?", new String[]{String.valueOf(producto.getId())});
-        } else {
-            return db.insert("productos", null, values);
+    public List<String> obtenerResumenVentasHoy() {
+        List<String> ventas = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT p.nombre, v.cantidad, v.total " +
+                       "FROM ventas v JOIN productos p ON v.producto_id = p.id " +
+                       "WHERE date(v.fecha) = date('now', 'localtime')";
+        Cursor c = db.rawQuery(query, null);
+        if (c.moveToFirst()) {
+            do {
+                ventas.add(c.getString(0) + " (x" + c.getInt(1) + ") - $" + c.getDouble(2));
+            } while (c.moveToNext());
         }
+        c.close();
+        return ventas;
     }
 
-    // LEER TODOS
+    public void eliminar(int id) {
+        dbHelper.getWritableDatabase().delete("productos", "id = ?", new String[]{String.valueOf(id)});
+    }
+
     public List<Producto> obtenerTodos() {
         List<Producto> lista = new ArrayList<>();
-        Cursor cursor = db.query("productos", null, null, null, null, null, "nombre ASC");
-
-        if (cursor.moveToFirst()) {
+        Cursor c = dbHelper.getReadableDatabase().rawQuery("SELECT * FROM productos", null);
+        if (c.moveToFirst()) {
             do {
-                Producto p = new Producto(
-                    cursor.getInt(0),
-                    cursor.getString(1),
-                    cursor.getDouble(2),
-                    cursor.getInt(3)
-                );
-                lista.add(p);
-            } while (cursor.moveToNext());
+                lista.add(new Producto(c.getInt(0), c.getString(1), c.getInt(2), c.getDouble(3)));
+            } while (c.moveToNext());
         }
-        cursor.close();
+        c.close();
         return lista;
-    }
-
-    // ELIMINAR
-    public void eliminar(int id) {
-        db.delete("productos", "id = ?", new String[]{String.valueOf(id)});
     }
 }

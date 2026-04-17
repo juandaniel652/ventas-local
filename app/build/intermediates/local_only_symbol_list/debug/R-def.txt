@@ -1,0 +1,27 @@
+R_DEF: Internal format may change without notice
+local
+color backgroundGrey
+color colorAccent
+color colorPrimary
+color colorPrimaryDark
+color textDark
+id btnBorrar
+id btnVender
+id etNombre
+id etPrecio
+id etStock
+id fabAgregar
+id itemNombre
+id itemPrecio
+id itemStock
+id rvInventario
+id rvVentasDía
+id tabLayout
+id tvTotalHoy
+id viewPager
+layout activity_main
+layout dialog_producto
+layout fragment_inventario
+layout fragment_ventas
+layout item_producto
+style AppTheme
