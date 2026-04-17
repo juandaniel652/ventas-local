@@ -3,25 +3,63 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="24dp"
+    android:background="@color/surface_dark">
 
-    <EditText android:id="@+id/etNombre"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DETALLES DEL PRODUCTO"
+        android:textColor="@color/primary_accent"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre del producto"
-        android:background="@android:drawable/editbox_background"/>
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre del Producto"
+            android:textColor="@color/white"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText android:id="@+id/etStock"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Stock inicial"
-        android:inputType="number"
-        android:layout_marginTop="10dp"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:baselineAligned="false">
 
-    <EditText android:id="@+id/etPrecio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Precio $"
-        android:inputType="numberDecimal"
-        android:layout_marginTop="10dp"/>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etStock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Stock"
+                android:inputType="number"
+                android:textColor="@color/white"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPrecio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Precio ($)"
+                android:inputType="numberDecimal"
+                android:textColor="@color/white"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 </LinearLayout>

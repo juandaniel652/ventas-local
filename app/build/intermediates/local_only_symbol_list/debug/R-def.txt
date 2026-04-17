@@ -10,6 +10,7 @@ color text_high_emphasis
 color text_medium_emphasis
 color white
 drawable logo_maxi
+id action_theme
 id btnBorrar
 id btnVender
 id etNombre
@@ -30,5 +31,6 @@ layout dialog_producto
 layout fragment_inventario
 layout fragment_ventas
 layout item_producto
+menu main_menu
 string app_name
 style Theme.StockApp

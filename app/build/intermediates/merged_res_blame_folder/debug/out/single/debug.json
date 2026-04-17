@@ -8,6 +8,10 @@
         "source": "com.tuapp.stockapp-main-31:/layout/activity_main.xml"
     },
     {
+        "merged": "com.tuapp.stockapp-merged_res-29:/menu_main_menu.xml.flat",
+        "source": "com.tuapp.stockapp-main-31:/menu/main_menu.xml"
+    },
+    {
         "merged": "com.tuapp.stockapp-merged_res-29:/layout_fragment_inventario.xml.flat",
         "source": "com.tuapp.stockapp-main-31:/layout/fragment_inventario.xml"
     },
