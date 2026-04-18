@@ -1,13 +1,14 @@
 R_DEF: Internal format may change without notice
 local
 color bg_dark
+color black
 color error_red
 color primary_accent
-color secondary_accent
 color surface_dark
 color surface_variant
 color text_high_emphasis
 color text_medium_emphasis
+color text_secondary
 color white
 drawable logo_maxi
 id action_theme
@@ -33,4 +34,5 @@ layout fragment_ventas
 layout item_producto
 menu main_menu
 string app_name
+style CustomDialog
 style Theme.StockApp

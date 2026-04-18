@@ -8,20 +8,19 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tuapp.stockapp.R;
 import com.tuapp.stockapp.database.ProductoDAO;
 import com.tuapp.stockapp.model.Producto;
 import com.tuapp.stockapp.util.ProductoAdapter;
 import java.util.List;
 
-public class InventarioFragment extends Fragment implements ProductoAdapter.OnProductoListener {
-
+public class InventarioFragment extends Fragment {
     private ProductoDAO dao;
-    private ProductoAdapter adapter;
     private RecyclerView rv;
 
     @Nullable
@@ -32,81 +31,89 @@ public class InventarioFragment extends Fragment implements ProductoAdapter.OnPr
         rv = view.findViewById(R.id.rvInventario);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         
-        view.findViewById(R.id.fabAgregar).setOnClickListener(v -> mostrarDialogo(null));
+        FloatingActionButton fab = view.findViewById(R.id.fabAgregar);
+        if (fab != null) {
+            fab.setOnClickListener(v -> mostrarDialogoProducto(null));
+        }
 
         actualizarLista();
         return view;
     }
 
-    public void actualizarLista() {
-        adapter = new ProductoAdapter(dao.obtenerTodos(), this);
-        rv.setAdapter(adapter);
+    private void actualizarLista() {
+        List<Producto> lista = dao.obtenerTodos();
+        rv.setAdapter(new ProductoAdapter(lista, new ProductoAdapter.OnProductoListener() {
+            @Override
+            public void onVenderClick(Producto p) {
+                if (p.getStock() > 0) {
+                    // Venta rápida: descuenta 1 y registra
+                    dao.registrarVenta(p.getId(), 1, p.getPrecio());
+                    actualizarLista();
+                    Toast.makeText(getContext(), "Vendido: " + p.getNombre(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Sin stock de " + p.getNombre(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onBorrarClick(Producto p) {
+                confirmarEliminacion(p);
+            }
+
+            @Override
+            public void onEditarClick(Producto p) {
+                mostrarDialogoProducto(p);
+            }
+        }));
     }
 
-    private void mostrarDialogo(@Nullable Producto pExistente) {
+    private void mostrarDialogoProducto(@Nullable Producto p) {
         View v = LayoutInflater.from(getContext()).inflate(R.layout.dialog_producto, null);
-        EditText etN = v.findViewById(R.id.etNombre);
-        EditText etS = v.findViewById(R.id.etStock);
-        EditText etP = v.findViewById(R.id.etPrecio);
+        EditText etNom = v.findViewById(R.id.etNombre);
+        EditText etStock = v.findViewById(R.id.etStock);
+        EditText etPrecio = v.findViewById(R.id.etPrecio);
 
-        if (pExistente != null) {
-            etN.setText(pExistente.getNombre());
-            etS.setText(String.valueOf(pExistente.getStock()));
-            etP.setText(String.valueOf(pExistente.getPrecio()));
+        if (p != null) {
+            etNom.setText(p.getNombre());
+            etStock.setText(String.valueOf(p.getStock()));
+            etPrecio.setText(String.valueOf(p.getPrecio()));
         }
 
-        new AlertDialog.Builder(getContext())
-            .setTitle(pExistente == null ? "Nuevo Producto" : "Editar Producto")
+        new MaterialAlertDialogBuilder(requireContext())
+            .setTitle(p == null ? "Nuevo Producto" : "Editar Producto")
             .setView(v)
             .setPositiveButton("Guardar", (d, w) -> {
                 try {
-                    String nombre = etN.getText().toString();
-                    int stock = Integer.parseInt(etS.getText().toString());
-                    double precio = Double.parseDouble(etP.getText().toString());
-
-                    if (pExistente == null) {
-                        dao.insertar(new Producto(0, nombre, stock, precio));
-                        Toast.makeText(getContext(), "Producto guardado", Toast.LENGTH_SHORT).show();
-                    } else {
-                        dao.actualizar(new Producto(pExistente.getId(), nombre, stock, precio));
-                        Toast.makeText(getContext(), "Producto actualizado", Toast.LENGTH_SHORT).show();
-                    }
+                    String nombre = etNom.getText().toString();
+                    int stock = Integer.parseInt(etStock.getText().toString());
+                    double precio = Double.parseDouble(etPrecio.getText().toString());
+                    if (p == null) dao.insertar(new Producto(0, nombre, stock, precio));
+                    else dao.actualizar(new Producto(p.getId(), nombre, stock, precio));
                     actualizarLista();
                 } catch (Exception e) {
                     Toast.makeText(getContext(), "Error en los datos", Toast.LENGTH_SHORT).show();
                 }
             })
-            .setNegativeButton("Cancelar", null)
-            .show();
+            .setNegativeButton("Cancelar", null).show();
     }
 
-    @Override
-    public void onVenderClick(Producto p) {
-        if (p.getStock() > 0) {
-            dao.registrarVenta(p.getId(), 1, p.getPrecio());
-            actualizarLista();
-            Toast.makeText(getContext(), "Venta: " + p.getNombre(), Toast.LENGTH_SHORT).show();
+    private void confirmarEliminacion(Producto p) {
+        if (dao.tieneVentas(p.getId())) {
+            new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Acción Protegida")
+                .setMessage("El producto '" + p.getNombre() + "' tiene ventas registradas. No se puede eliminar para no romper el historial. Bajale el stock a 0 si ya no lo vendés.")
+                .setPositiveButton("Entendido", null).show();
         } else {
-            Toast.makeText(getContext(), "Sin stock!", Toast.LENGTH_SHORT).show();
+            new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("¿Eliminar " + p.getNombre() + "?")
+                .setPositiveButton("Eliminar", (d, w) -> {
+                    dao.eliminar(p.getId());
+                    actualizarLista();
+                })
+                .setNegativeButton("Cancelar", null).show();
         }
     }
 
     @Override
-    public void onBorrarClick(Producto p) {
-        new AlertDialog.Builder(getContext())
-            .setTitle("Eliminar " + p.getNombre())
-            .setMessage("¿Estás seguro?")
-            .setPositiveButton("Sí", (d, w) -> {
-                dao.eliminar(p.getId());
-                actualizarLista();
-            })
-            .setNegativeButton("No", null)
-            .show();
-    }
-
-    @Override
-    public void onEditarClick(Producto p) {
-        // Este es el método que faltaba conectar
-        mostrarDialogo(p);
-    }
+    public void onResume() { super.onResume(); actualizarLista(); }
 }

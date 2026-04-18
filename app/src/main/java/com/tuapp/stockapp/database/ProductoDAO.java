@@ -36,11 +36,21 @@ public class ProductoDAO {
     public void registrarVenta(int productoId, int cantidad, double total) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.execSQL("UPDATE productos SET stock = stock - " + cantidad + " WHERE id = " + productoId);
-        ContentValues v = new ContentValues();
-        v.put("producto_id", productoId);
-        v.put("cantidad", cantidad);
-        v.put("total", total);
-        db.insert("ventas", null, v);
+        db.execSQL("INSERT INTO ventas (producto_id, cantidad, total, fecha) VALUES (" + 
+                   productoId + ", " + cantidad + ", " + total + ", datetime('now', 'localtime'))");
+    }
+
+    public boolean tieneVentas(int productoId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT COUNT(*) FROM ventas WHERE producto_id = ?", new String[]{String.valueOf(productoId)});
+        boolean tiene = false;
+        if (c.moveToFirst()) tiene = c.getInt(0) > 0;
+        c.close();
+        return tiene;
+    }
+
+    public void eliminar(int id) {
+        dbHelper.getWritableDatabase().delete("productos", "id = ?", new String[]{String.valueOf(id)});
     }
 
     public double obtenerTotalVentasHoy() {
@@ -55,26 +65,21 @@ public class ProductoDAO {
     public List<String> obtenerResumenVentasHoy() {
         List<String> ventas = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT p.nombre, v.cantidad, v.total " +
-                       "FROM ventas v JOIN productos p ON v.producto_id = p.id " +
-                       "WHERE date(v.fecha) = date('now', 'localtime')";
+        String query = "SELECT p.nombre, v.cantidad, v.total FROM ventas v JOIN productos p ON v.producto_id = p.id WHERE date(v.fecha) = date('now', 'localtime') ORDER BY v.id DESC";
         Cursor c = db.rawQuery(query, null);
         if (c.moveToFirst()) {
             do {
-                ventas.add(c.getString(0) + " (x" + c.getInt(1) + ") - $" + c.getDouble(2));
+                ventas.add(c.getString(0) + " (x" + c.getInt(1) + ") - $" + String.format("%.2f", c.getDouble(2)));
             } while (c.moveToNext());
         }
         c.close();
         return ventas;
     }
 
-    public void eliminar(int id) {
-        dbHelper.getWritableDatabase().delete("productos", "id = ?", new String[]{String.valueOf(id)});
-    }
-
     public List<Producto> obtenerTodos() {
         List<Producto> lista = new ArrayList<>();
-        Cursor c = dbHelper.getReadableDatabase().rawQuery("SELECT * FROM productos", null);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM productos", null);
         if (c.moveToFirst()) {
             do {
                 lista.add(new Producto(c.getInt(0), c.getString(1), c.getInt(2), c.getDouble(3)));

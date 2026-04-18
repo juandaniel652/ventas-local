@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -26,9 +27,17 @@ public class VentasFragment extends Fragment {
         dao = new ProductoDAO(getContext());
         tvTotal = view.findViewById(R.id.tvTotalHoy);
         
-        // Vamos a usar un ListView simple para el historial rápido de hoy
-        lvVentas = new ListView(getContext());
-        ((ViewGroup)view).addView(lvVentas); 
+        // Buscamos el contenedor principal del fragment para meter el ListView
+        // Si el root de fragment_ventas es un LinearLayout o RelativeLayout, funcionará
+        if (view instanceof ViewGroup) {
+            lvVentas = new ListView(getContext());
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            lvVentas.setLayoutParams(lp);
+            ((ViewGroup)view).addView(lvVentas);
+        }
         
         return view;
     }
@@ -39,12 +48,25 @@ public class VentasFragment extends Fragment {
         actualizarDatos();
     }
 
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+        if (menuVisible && isResumed()) {
+            actualizarDatos();
+        }
+    }
+
     public void actualizarDatos() {
-        double total = dao.obtenerTotalVentasHoy();
-        tvTotal.setText("$ " + String.format("%.2f", total));
-        
-        List<String> lista = dao.obtenerResumenVentasHoy();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, lista);
-        lvVentas.setAdapter(adapter);
+        if (dao == null && getContext() != null) dao = new ProductoDAO(getContext());
+        if (dao != null && tvTotal != null) {
+            double total = dao.obtenerTotalVentasHoy();
+            tvTotal.setText("$ " + String.format("%.2f", total));
+            
+            List<String> lista = dao.obtenerResumenVentasHoy();
+            if (getContext() != null && lvVentas != null) {
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, lista);
+                lvVentas.setAdapter(adapter);
+            }
+        }
     }
 }
