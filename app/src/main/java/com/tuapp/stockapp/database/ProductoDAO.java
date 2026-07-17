@@ -68,11 +68,23 @@ public class ProductoDAO {
     public List<String> obtenerResumenVentasHoy() {
         List<String> ventas = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT p.nombre, v.cantidad, v.total FROM ventas v JOIN productos p ON v.producto_id = p.id WHERE date(v.fecha) = date('now', 'localtime') ORDER BY v.id DESC";
+        
+        // Agrupamos por el ID del producto para consolidar las cantidades y totales del día
+        String query = "SELECT p.nombre, SUM(v.cantidad), SUM(v.total) " +
+                       "FROM ventas v " +
+                       "JOIN productos p ON v.producto_id = p.id " +
+                       "WHERE date(v.fecha) = date('now', 'localtime') " +
+                       "GROUP BY v.producto_id " + // <--- Agrupación clave
+                       "ORDER BY SUM(v.total) DESC"; // Te los ordena de lo que más recaudó a lo menos
+                       
         Cursor c = db.rawQuery(query, null);
         if (c.moveToFirst()) {
             do {
-                ventas.add(c.getString(0) + " (x" + c.getInt(1) + ") - $" + String.format("%.2f", c.getDouble(2)));
+                String nombreProducto = c.getString(0);
+                int cantidadTotal = c.getInt(1);
+                double recaudacionTotal = c.getDouble(2);
+                
+                ventas.add(nombreProducto + " (x" + cantidadTotal + ") - $" + String.format("%.2f", recaudacionTotal));
             } while (c.moveToNext());
         }
         c.close();

@@ -42,32 +42,29 @@ public class HistorialFragment extends Fragment {
         return elv;
     }
 
-    private void abrirDetalleVentas(String fechaIso) {
-        DbHelper db = new DbHelper(getContext());
-        String sql = "SELECT v.id, p.nombre, v.cantidad, v.total FROM ventas v JOIN productos p ON v.producto_id = p.id WHERE date(v.fecha) = ?";
-        Cursor c = db.getReadableDatabase().rawQuery(sql, new String[]{fechaIso});
-        List<String> labels = new ArrayList<>();
-        List<Integer> ids = new ArrayList<>();
-        
-        if (c.moveToFirst()) {
-            do {
-                ids.add(c.getInt(0));
-                labels.add(c.getString(1) + " (x" + c.getInt(2) + ") - $" + String.format("%.2f", c.getDouble(3)));
-            } while (c.moveToNext());
-        }
-        c.close();
-
-        if (ids.isEmpty()) {
-            cargarDatos();
-            return;
-        }
-
+    private void anularVentaAgrupada(String idsVenta, String fechaIso) {
         new MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Ventas del " + fechaIso)
-            .setItems(labels.toArray(new String[0]), (dialog, which) -> {
-                anularVenta(ids.get(which), fechaIso);
+            .setTitle("¿Anular estas ventas?")
+            .setMessage("Se darán de baja los registros agrupados de este producto en el día.")
+            .setPositiveButton("Anular", (d, w) -> {
+                DbHelper db = new DbHelper(getContext());
+                // Usamos IN con los IDs concatenados de forma segura (ej: WHERE id IN (12,15))
+                String sqlDelete = "DELETE FROM ventas WHERE id IN (" + idsVenta + ")";
+                db.getWritableDatabase().execSQL(sqlDelete);
+                
+                cargarDatos();
+                
+                if (getActivity() != null) {
+                    ViewPager2 vp = getActivity().findViewById(R.id.viewPager);
+                    if (vp != null && vp.getAdapter() != null) {
+                        vp.getAdapter().notifyDataSetChanged();
+                    }
+                }
+                
+                abrirDetalleVentas(fechaIso);
+                Toast.makeText(getContext(), "Ventas anuladas", Toast.LENGTH_SHORT).show();
             })
-            .setNegativeButton("Cerrar", null).show();
+            .setNegativeButton("Cancelar", null).show();
     }
 
     private void anularVenta(int idVenta, String fechaIso) {
