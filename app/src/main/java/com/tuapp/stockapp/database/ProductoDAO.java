@@ -50,7 +50,10 @@ public class ProductoDAO {
     }
 
     public void eliminar(int id) {
-        dbHelper.getWritableDatabase().delete("productos", "id = ?", new String[]{String.valueOf(id)});
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("activo", 0); // Lo marcamos como inactivo
+        db.update("productos", v, "id = ?", new String[]{String.valueOf(id)});
     }
 
     public double obtenerTotalVentasHoy() {
@@ -79,7 +82,8 @@ public class ProductoDAO {
     public List<Producto> obtenerTodos() {
         List<Producto> lista = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM productos", null);
+        // Agregamos el FILTRO WHERE activo = 1
+        Cursor c = db.rawQuery("SELECT * FROM productos WHERE activo = 1", null);
         if (c.moveToFirst()) {
             do {
                 lista.add(new Producto(c.getInt(0), c.getString(1), c.getInt(2), c.getDouble(3)));

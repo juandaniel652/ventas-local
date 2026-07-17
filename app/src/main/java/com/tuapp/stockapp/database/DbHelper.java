@@ -7,7 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "stock_pro.db";
-    private static final int DATABASE_VERSION = 2;
+    // Subimos la versión a 3 para forzar la actualización de la estructura
+    private static final int DATABASE_VERSION = 3; 
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -15,14 +16,14 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Tabla de Productos (El Inventario)
+        // Añadimos "activo INTEGER DEFAULT 1" al final
         db.execSQL("CREATE TABLE productos (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "nombre TEXT," +
                 "stock INTEGER," +
-                "precio REAL)");
+                "precio REAL," +
+                "activo INTEGER DEFAULT 1)"); // 1 = Visible, 0 = Eliminado lógico
 
-        // Tabla de Ventas (El Historial Diario)
         db.execSQL("CREATE TABLE ventas (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "producto_id INTEGER," +
@@ -34,8 +35,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS ventas");
-        db.execSQL("DROP TABLE IF EXISTS productos");
-        onCreate(db);
+        if (oldVersion < 3) {
+            // Migración limpia: si Maxi ya tiene la v2, le agrega la columna sin borrarle sus productos actuales
+            db.execSQL("ALTER TABLE productos ADD COLUMN activo INTEGER DEFAULT 1");
+        }
     }
 }
