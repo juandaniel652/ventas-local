@@ -42,18 +42,55 @@ public class HistorialFragment extends Fragment {
         return elv;
     }
 
-    private void anularVentaAgrupada(String idsVenta, String fechaIso) {
+    private void abrirDetalleVentas(String fechaIso) {
+        DbHelper db = new DbHelper(getContext());
+        
+        // Agrupamos por producto y consolidamos las ventas del día
+        String sql = "SELECT group_concat(v.id), p.nombre, SUM(v.cantidad), SUM(v.total) " +
+                     "FROM ventas v " +
+                     "JOIN productos p ON v.producto_id = p.id " +
+                     "WHERE date(v.fecha) = ? " +
+                     "GROUP BY v.producto_id";
+                     
+        Cursor c = db.getReadableDatabase().rawQuery(sql, new String[]{fechaIso});
+        List<String> labels = new ArrayList<>();
+        List<String> concatenatedIds = new ArrayList<>();
+        
+        if (c.moveToFirst()) {
+            do {
+                concatenatedIds.add(c.getString(0)); // Lista de IDs separados por coma (ej: "1,4")
+                labels.add(c.getString(1) + " (x" + c.getInt(2) + ") - $" + String.format("%.2f", c.getDouble(3)));
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        if (concatenatedIds.isEmpty()) {
+            cargarDatos();
+            return;
+        }
+
+        new MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Ventas del " + fechaIso)
+            .setItems(labels.toArray(new String[0]), (dialog, which) -> {
+                anularVenta(concatenatedIds.get(which), fechaIso);
+            })
+            .setNegativeButton("Cerrar", null).show();
+    }
+
+    private void anularVenta(String idsVenta, String fechaIso) {
         new MaterialAlertDialogBuilder(requireContext())
             .setTitle("¿Anular estas ventas?")
             .setMessage("Se darán de baja los registros agrupados de este producto en el día.")
             .setPositiveButton("Anular", (d, w) -> {
                 DbHelper db = new DbHelper(getContext());
-                // Usamos IN con los IDs concatenados de forma segura (ej: WHERE id IN (12,15))
+                // Borramos todos los IDs que pertenecen a esa agrupación del día
                 String sqlDelete = "DELETE FROM ventas WHERE id IN (" + idsVenta + ")";
                 db.getWritableDatabase().execSQL(sqlDelete);
                 
+                // Refrescar lista mensual
                 cargarDatos();
                 
+                // Refrescar pestaña de ventas de Hoy por si Maxi está parado ahí
                 if (getActivity() != null) {
                     ViewPager2 vp = getActivity().findViewById(R.id.viewPager);
                     if (vp != null && vp.getAdapter() != null) {
@@ -61,32 +98,7 @@ public class HistorialFragment extends Fragment {
                     }
                 }
                 
-                abrirDetalleVentas(fechaIso);
-                Toast.makeText(getContext(), "Ventas anuladas", Toast.LENGTH_SHORT).show();
-            })
-            .setNegativeButton("Cancelar", null).show();
-    }
-
-    private void anularVenta(int idVenta, String fechaIso) {
-        new MaterialAlertDialogBuilder(requireContext())
-            .setTitle("¿Anular esta venta?")
-            .setPositiveButton("Anular", (d, w) -> {
-                DbHelper db = new DbHelper(getContext());
-                db.getWritableDatabase().delete("ventas", "id = ?", new String[]{String.valueOf(idVenta)});
-                
-                // REFRESCAR LOCAL (Historial)
-                cargarDatos();
-                
-                // REFRESCAR GLOBAL (Pestaña HOY)
-                // Buscamos el ViewPager en la Activity y notificamos que algo cambió
-                if (getActivity() != null) {
-                    ViewPager2 vp = getActivity().findViewById(R.id.viewPager);
-                    if (vp != null && vp.getAdapter() != null) {
-                        // Esto fuerza a que los fragmentos se revaliden al deslizar
-                        vp.getAdapter().notifyDataSetChanged();
-                    }
-                }
-                
+                // Volver a abrir el diálogo actualizado
                 abrirDetalleVentas(fechaIso);
                 Toast.makeText(getContext(), "Venta eliminada", Toast.LENGTH_SHORT).show();
             })
@@ -94,7 +106,10 @@ public class HistorialFragment extends Fragment {
     }
 
     @Override
-    public void onResume() { super.onResume(); cargarDatos(); }
+    public void onResume() { 
+        super.onResume(); 
+        cargarDatos(); 
+    }
 
     private void cargarDatos() {
         Map<String, GrupoHistorial> mapa = new LinkedHashMap<>();
