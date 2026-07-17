@@ -49,11 +49,18 @@ public class ProductoDAO {
         return tiene;
     }
 
+    // Borrado lógico (Oculta el producto de las listas pero mantiene la integridad)
     public void eliminar(int id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues v = new ContentValues();
-        v.put("activo", 0); // Lo marcamos como inactivo
+        v.put("activo", 0);
         db.update("productos", v, "id = ?", new String[]{String.valueOf(id)});
+    }
+
+    // Borrado físico real (Solo usado si no tiene ventas asociadas)
+    public void eliminarFisico(int id) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete("productos", "id = ?", new String[]{String.valueOf(id)});
     }
 
     public double obtenerTotalVentasHoy() {
@@ -69,13 +76,12 @@ public class ProductoDAO {
         List<String> ventas = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         
-        // Agrupamos por el ID del producto para consolidar las cantidades y totales del día
         String query = "SELECT p.nombre, SUM(v.cantidad), SUM(v.total) " +
                        "FROM ventas v " +
                        "JOIN productos p ON v.producto_id = p.id " +
                        "WHERE date(v.fecha) = date('now', 'localtime') " +
-                       "GROUP BY v.producto_id " + // <--- Agrupación clave
-                       "ORDER BY SUM(v.total) DESC"; // Te los ordena de lo que más recaudó a lo menos
+                       "GROUP BY v.producto_id " +
+                       "ORDER BY SUM(v.total) DESC";
                        
         Cursor c = db.rawQuery(query, null);
         if (c.moveToFirst()) {
@@ -94,8 +100,7 @@ public class ProductoDAO {
     public List<Producto> obtenerTodos() {
         List<Producto> lista = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        // Agregamos el FILTRO WHERE activo = 1
-        Cursor c = db.rawQuery("SELECT * FROM productos WHERE activo = 1", null);
+        Cursor c = db.rawQuery("SELECT * FROM productos WHERE activo = 1 ORDER BY nombre ASC", null);
         if (c.moveToFirst()) {
             do {
                 lista.add(new Producto(c.getInt(0), c.getString(1), c.getInt(2), c.getDouble(3)));

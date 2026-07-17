@@ -100,15 +100,22 @@ public class InventarioFragment extends Fragment {
     private void confirmarEliminacion(Producto p) {
         if (dao.tieneVentas(p.getId())) {
             new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Acción Protegida")
-                .setMessage("El producto '" + p.getNombre() + "' tiene ventas registradas. No se puede eliminar para no romper el historial. Bajale el stock a 0 si ya no lo vendés.")
-                .setPositiveButton("Entendido", null).show();
+                .setTitle("Ocultar Producto")
+                .setMessage("El producto '" + p.getNombre() + "' tiene ventas registradas. Se ocultará del catálogo y no aparecerá para vender, pero se mantendrá en el historial.")
+                .setPositiveButton("Ocultar", (d, w) -> {
+                    dao.eliminar(p.getId()); // Borrado lógico (activo = 0)
+                    actualizarLista();
+                    Toast.makeText(getContext(), p.getNombre() + " ocultado", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancelar", null).show();
         } else {
             new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("¿Eliminar " + p.getNombre() + "?")
+                .setMessage("Este producto no tiene ventas en el historial, se eliminará permanentemente de la base de datos.")
                 .setPositiveButton("Eliminar", (d, w) -> {
-                    dao.eliminar(p.getId());
+                    dao.eliminarFisico(p.getId()); // Borrado físico real
                     actualizarLista();
+                    Toast.makeText(getContext(), p.getNombre() + " eliminado", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Cancelar", null).show();
         }
