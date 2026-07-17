@@ -69,10 +69,32 @@ public class HistorialFragment extends Fragment {
             return;
         }
 
+        // --- CONVERSIÓN DE FECHA AMIGABLE ---
+        String fechaFormateada = fechaIso; // Fallback por si falla el parseo
+        try {
+            java.text.SimpleDateFormat formatoEntrada = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+            java.text.SimpleDateFormat formatoSalida = new java.text.SimpleDateFormat("d 'de' MMMM 'de' yyyy", new java.util.Locale("es", "AR"));
+            java.util.Date fecha = formatoEntrada.parse(fechaIso);
+            if (fecha != null) {
+                fechaFormateada = formatoSalida.format(fecha);
+                // Forzar la primera letra en mayúscula (ej: "29 de Junio...")
+                if (fechaFormateada.contains(" de ")) {
+                    String[] partes = fechaFormateada.split(" de ");
+                    if (partes.length > 1) {
+                        partes[1] = partes[1].substring(0, 1).toUpperCase() + partes[1].substring(1);
+                        fechaFormateada = partes[0] + " de " + partes[1] + " de " + partes[2];
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // ------------------------------------
+
         new MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Ventas del " + fechaIso)
+            .setTitle("Ventas del " + fechaFormateada) // <-- Usamos la fecha limpia acá
             .setItems(labels.toArray(new String[0]), (dialog, which) -> {
-                anularVenta(concatenatedIds.get(which), fechaIso);
+                anularVenta(concatenatedIds.get(which), fechaIso); // Seguimos pasando fechaIso a anularVenta para que la query no se rompa
             })
             .setNegativeButton("Cerrar", null).show();
     }
