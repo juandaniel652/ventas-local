@@ -1,5 +1,6 @@
 package com.tuapp.stockapp.ui;
 
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,15 +18,13 @@ import com.tuapp.stockapp.util.UpdateManager; // Importamos tu nuevo manager
 import com.tuapp.stockapp.util.ViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.appcompat.super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        // --- CHEQUEO AUTOMÁTICO DE ACTUALIZACIONES ---
+        // Lanzamos el verificador automático de actualizaciones para Maxi
         UpdateManager updateManager = new UpdateManager(this);
         updateManager.verificarActualizaciones();
         // ----------------------------------------------

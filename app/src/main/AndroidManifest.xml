@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Permisos para el actualizador -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo_maxi"
@@ -16,20 +20,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-    </application>
-
-</manifest>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- Permisos necesarios -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
-    <application ...>
-        
-        <activity android:name=".ui.MainActivity" ...>
-            <!-- tu config actual -->
         </activity>
 
         <!-- Proveedor de archivos para la instalación segura en Android 7.0+ -->
