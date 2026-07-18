@@ -1,0 +1,18 @@
+# Archivos del sistema y del IDE
+.idea/
+.gradle/
+*.iml
+local.properties
+.DS_Store
+
+# Carpetas de compilación (¡La más pesada!)
+build/
+app/build/
+
+# Archivos temporales o sueltos que no corresponden al código limpio
+app/src/enlace_actualizador.java
+
+# Logs y caches
+*.log
+.pnp
+.pnp.js

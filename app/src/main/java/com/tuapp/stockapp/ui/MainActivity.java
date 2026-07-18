@@ -13,16 +13,22 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.tuapp.stockapp.R;
 import com.tuapp.stockapp.database.DbHelper;
+import com.tuapp.stockapp.util.UpdateManager; // Importamos tu nuevo manager
 import com.tuapp.stockapp.util.ViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.appcompat.super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // --- CHEQUEO AUTOMÁTICO DE ACTUALIZACIONES ---
+        UpdateManager updateManager = new UpdateManager(this);
+        updateManager.verificarActualizaciones();
+        // ----------------------------------------------
 
         TabLayout tl = findViewById(R.id.tabLayout);
         ViewPager2 vp = findViewById(R.id.viewPager);
@@ -38,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        // Agregamos una opción extra para limpiar todo
         menu.add(0, 999, 0, "LIMPIAR TODO (BORRAR VENTAS)");
         return true;
     }
@@ -52,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         
-        // BOTÓN DE PÁNICO PARA MAXI
         if (item.getItemId() == 999) {
             new MaterialAlertDialogBuilder(this)
                 .setTitle("¿BORRAR TODAS LAS VENTAS?")
@@ -62,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     db.getWritableDatabase().execSQL("DELETE FROM ventas");
                     db.getWritableDatabase().execSQL("DELETE FROM sqlite_sequence WHERE name='ventas'");
                     Toast.makeText(this, "Base de datos de ventas limpiada", Toast.LENGTH_SHORT).show();
-                    recreate(); // Reinicia la app para ver los cambios
+                    recreate();
                 })
                 .setNegativeButton("CANCELAR", null)
                 .show();
