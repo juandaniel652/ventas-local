@@ -10,10 +10,10 @@ android {
         applicationId "com.tuapp.stockapp"
         minSdk 24
         targetSdk 34
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 3          // <-- Cambiado de 1 a 3
+        versionName "1.2.0"    // <-- Cambiado de 1.0.0 a 1.2.0
     }
-
+    
     buildTypes {
         release {
             minifyEnabled false

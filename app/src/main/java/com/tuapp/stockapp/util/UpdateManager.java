@@ -101,12 +101,15 @@ public class UpdateManager {
     }
 
     private void lanzarInstalador(File apkFile) {
-        Context context = activity.getApplicationContext();
-        Uri apkUri = FileProvider.getUriForFile(context, "com.tuapp.stockapp.fileprovider", apkFile);
+        // En vez de application context, usamos la activity directamente para el FileProvider
+        Uri apkUri = FileProvider.getUriForFile(activity, "com.tuapp.stockapp.fileprovider", apkFile);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        
+        // FLAG_ACTIVITY_NEW_TASK a veces duplica procesos en Intents de instalación en la misma Activity; 
+        // Usamos GRANT_READ_URI_PERMISSION de forma explícita
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         
         // Manejo específico para Android 8.0+ requiriendo permisos de orígenes desconocidos
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
