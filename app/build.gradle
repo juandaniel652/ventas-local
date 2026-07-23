@@ -10,15 +10,29 @@ android {
         applicationId "com.tuapp.stockapp"
         minSdk 24
         targetSdk 34
-        versionCode 4          // <-- Cambiado de 1 a 3
-        versionName "1.2.1"    // <-- Cambiado de 1.0.0 a 1.2.0
+        versionCode 5         // <-- Cambiado de 1 a 3
+        versionName "1.2.2"    // <-- Cambiado de 1.0.0 a 1.2.0
     }
     
+    // 1. Definimos la clave de firma
+    signingConfigs {
+        release {
+            storeFile file(MYAPP_RELEASE_STORE_FILE)
+            storePassword MYAPP_RELEASE_STORE_PASSWORD
+            keyAlias MYAPP_RELEASE_KEY_ALIAS
+            keyPassword MYAPP_RELEASE_KEY_PASSWORD
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            // 2. Le decimos a la build de release que use la firma que definimos arriba
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

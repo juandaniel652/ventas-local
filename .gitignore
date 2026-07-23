@@ -16,3 +16,5 @@ app/src/enlace_actualizador.java
 *.log
 .pnp
 .pnp.js
+ventas-local/mi-clave.jks
+ventas-local/maxi.keystore
