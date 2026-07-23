@@ -49,7 +49,6 @@ public class ProductoDAO {
         return tiene;
     }
 
-    // Borrado lógico (Oculta el producto de las listas pero mantiene la integridad)
     public void eliminar(int id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues v = new ContentValues();
@@ -57,7 +56,6 @@ public class ProductoDAO {
         db.update("productos", v, "id = ?", new String[]{String.valueOf(id)});
     }
 
-    // Borrado físico real (Solo usado si no tiene ventas asociadas)
     public void eliminarFisico(int id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete("productos", "id = ?", new String[]{String.valueOf(id)});
@@ -89,7 +87,6 @@ public class ProductoDAO {
                 String nombreProducto = c.getString(0);
                 int cantidadTotal = c.getInt(1);
                 double recaudacionTotal = c.getDouble(2);
-                
                 ventas.add(nombreProducto + " (x" + cantidadTotal + ") - $" + String.format("%.2f", recaudacionTotal));
             } while (c.moveToNext());
         }
@@ -108,5 +105,56 @@ public class ProductoDAO {
         }
         c.close();
         return lista;
+    }
+
+    // --- MÉTODOS DE ANULACIÓN/DESCUENTO DEL HISTORIAL ---
+
+    // Resta 1 unidad de una venta (o borra la venta si era de 1 solo producto) y devuelve el stock
+    public void restarUnaUnidadVenta(int ventaId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        
+        // Obtener datos de la venta
+        Cursor c = db.rawQuery("SELECT producto_id, cantidad, total FROM ventas WHERE id = ?", new String[]{String.valueOf(ventaId)});
+        if (c.moveToFirst()) {
+            int productoId = c.getInt(0);
+            int cantidad = c.getInt(1);
+            double total = c.getDouble(2);
+            
+            if (cantidad > 1) {
+                double precioUnitario = total / cantidad;
+                int nuevaCantidad = cantidad - 1;
+                double nuevoTotal = total - precioUnitario;
+                
+                // Actualizar venta
+                db.execSQL("UPDATE ventas SET cantidad = " + nuevaCantidad + ", total = " + nuevoTotal + " WHERE id = " + ventaId);
+            } else {
+                // Borrar venta si era la última unidad
+                db.execSQL("DELETE FROM ventas WHERE id = " + ventaId);
+            }
+            
+            // Devolver 1 al stock
+            db.execSQL("UPDATE productos SET stock = stock + 1 WHERE id = " + productoId);
+        }
+        c.close();
+    }
+
+    // Elimina un grupo de ventas por IDs (ej: "1,4,8") y restaura el stock
+    public void eliminarVentasAgrupadas(String idsVenta) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        
+        // Devolver el stock correspondientes
+        String sqlSelect = "SELECT producto_id, SUM(cantidad) FROM ventas WHERE id IN (" + idsVenta + ") GROUP BY producto_id";
+        Cursor c = db.rawQuery(sqlSelect, null);
+        if (c.moveToFirst()) {
+            do {
+                int productoId = c.getInt(0);
+                int cantidad = c.getInt(1);
+                db.execSQL("UPDATE productos SET stock = stock + " + cantidad + " WHERE id = " + productoId);
+            } while (c.moveToNext());
+        }
+        c.close();
+        
+        // Borrar registros
+        db.execSQL("DELETE FROM ventas WHERE id IN (" + idsVenta + ")");
     }
 }

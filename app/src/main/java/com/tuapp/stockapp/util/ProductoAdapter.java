@@ -19,7 +19,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
     public interface OnProductoListener {
         void onVenderClick(Producto p);
         void onBorrarClick(Producto p);
-        void onEditarClick(Producto p); // Nuevo método para edición
+        void onEditarClick(Producto p);
     }
 
     public ProductoAdapter(List<Producto> lista, OnProductoListener listener) {
@@ -44,7 +44,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
         holder.btnV.setOnClickListener(v -> listener.onVenderClick(p));
         holder.btnB.setOnClickListener(v -> listener.onBorrarClick(p));
         
-        // Al tocar cualquier parte del texto, editamos
+        // Editar al tocar la tarjeta del producto
         holder.itemView.setOnClickListener(v -> listener.onEditarClick(p));
     }
 

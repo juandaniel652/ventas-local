@@ -5,15 +5,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.tuapp.stockapp.R;
 import com.tuapp.stockapp.database.DbHelper;
+import com.tuapp.stockapp.database.ProductoDAO;
 import com.tuapp.stockapp.model.GrupoHistorial;
 import com.tuapp.stockapp.util.HistorialExpandableAdapter;
 import java.util.ArrayList;
@@ -24,10 +27,12 @@ import java.util.Map;
 public class HistorialFragment extends Fragment {
     private ExpandableListView elv;
     private final String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+    private ProductoDAO productoDAO;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        productoDAO = new ProductoDAO(getContext());
         elv = new ExpandableListView(getContext());
         elv.setBackgroundColor(getResources().getColor(R.color.bg_dark));
         elv.setDividerHeight(2);
@@ -45,7 +50,6 @@ public class HistorialFragment extends Fragment {
     private void abrirDetalleVentas(String fechaIso) {
         DbHelper db = new DbHelper(getContext());
         
-        // Agrupamos por producto y consolidamos las ventas del día
         String sql = "SELECT group_concat(v.id), p.nombre, SUM(v.cantidad), SUM(v.total) " +
                      "FROM ventas v " +
                      "JOIN productos p ON v.producto_id = p.id " +
@@ -58,7 +62,7 @@ public class HistorialFragment extends Fragment {
         
         if (c.moveToFirst()) {
             do {
-                concatenatedIds.add(c.getString(0)); // Lista de IDs separados por coma (ej: "1,4")
+                concatenatedIds.add(c.getString(0));
                 labels.add(c.getString(1) + " (x" + c.getInt(2) + ") - $" + String.format("%.2f", c.getDouble(3)));
             } while (c.moveToNext());
         }
@@ -69,15 +73,13 @@ public class HistorialFragment extends Fragment {
             return;
         }
 
-        // --- CONVERSIÓN DE FECHA AMIGABLE ---
-        String fechaFormateada = fechaIso; // Fallback por si falla el parseo
+        String fechaFormateada = fechaIso;
         try {
             java.text.SimpleDateFormat formatoEntrada = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
             java.text.SimpleDateFormat formatoSalida = new java.text.SimpleDateFormat("d 'de' MMMM 'de' yyyy", new java.util.Locale("es", "AR"));
             java.util.Date fecha = formatoEntrada.parse(fechaIso);
             if (fecha != null) {
                 fechaFormateada = formatoSalida.format(fecha);
-                // Forzar la primera letra en mayúscula (ej: "29 de Junio...")
                 if (fechaFormateada.contains(" de ")) {
                     String[] partes = fechaFormateada.split(" de ");
                     if (partes.length > 1) {
@@ -89,42 +91,66 @@ public class HistorialFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // ------------------------------------
 
-        new MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Ventas del " + fechaFormateada) // <-- Usamos la fecha limpia acá
-            .setItems(labels.toArray(new String[0]), (dialog, which) -> {
-                anularVenta(concatenatedIds.get(which), fechaIso); // Seguimos pasando fechaIso a anularVenta para que la query no se rompa
-            })
-            .setNegativeButton("Cerrar", null).show();
+        // Crear diálogo personalizado para soportar click corto (1 unidad) y largo (todo)
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, labels);
+        
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+        .setTitle("Ventas del " + fechaFormateada)
+        .setMessage("Tap: Descuenta 1 ud. | Mantené presionado: Borra todo")
+        .setAdapter(adapter, null)
+        .setNegativeButton("Cerrar", null)
+        .create();
+
+        dialog.setOnShowListener(d -> {
+            dialog.getListView().setOnItemClickListener((parent, view, position, id) -> {
+                dialog.dismiss();
+                descontarUnaUnidad(concatenatedIds.get(position), fechaIso);
+            });
+
+            dialog.getListView().setOnItemLongClickListener((parent, view, position, id) -> {
+                dialog.dismiss();
+                anularVentaCompleta(concatenatedIds.get(position), fechaIso);
+                return true;
+            });
+        });
+
+        dialog.show();
     }
 
-    private void anularVenta(String idsVenta, String fechaIso) {
+    // CLICK CORTO: Descuenta 1 sola unidad
+    private void descontarUnaUnidad(String idsVenta, String fechaIso) {
+        String[] ids = idsVenta.split(",");
+        int primerId = Integer.parseInt(ids[0]); // Toma el primer registro del grupo
+        
+        productoDAO.restarUnaUnidadVenta(primerId);
+        refrescarTodo();
+        abrirDetalleVentas(fechaIso);
+        Toast.makeText(getContext(), "Se restó 1 unidad", Toast.LENGTH_SHORT).show();
+    }
+
+    // CLICK LARGO: Borra la venta agrupada del día entera
+    private void anularVentaCompleta(String idsVenta, String fechaIso) {
         new MaterialAlertDialogBuilder(requireContext())
-            .setTitle("¿Anular estas ventas?")
-            .setMessage("Se darán de baja los registros agrupados de este producto en el día.")
-            .setPositiveButton("Anular", (d, w) -> {
-                DbHelper db = new DbHelper(getContext());
-                // Borramos todos los IDs que pertenecen a esa agrupación del día
-                String sqlDelete = "DELETE FROM ventas WHERE id IN (" + idsVenta + ")";
-                db.getWritableDatabase().execSQL(sqlDelete);
-                
-                // Refrescar lista mensual
-                cargarDatos();
-                
-                // Refrescar pestaña de ventas de Hoy por si Maxi está parado ahí
-                if (getActivity() != null) {
-                    ViewPager2 vp = getActivity().findViewById(R.id.viewPager);
-                    if (vp != null && vp.getAdapter() != null) {
-                        vp.getAdapter().notifyDataSetChanged();
-                    }
-                }
-                
-                // Volver a abrir el diálogo actualizado
+            .setTitle("⚠️ ¿Borrar todas las ventas de este producto?")
+            .setMessage("Se eliminarán todos los registros agrupados de este producto en la fecha seleccionada y se devolverá el stock.")
+            .setPositiveButton("Sí, borrar todo", (d, w) -> {
+                productoDAO.eliminarVentasAgrupadas(idsVenta);
+                refrescarTodo();
                 abrirDetalleVentas(fechaIso);
-                Toast.makeText(getContext(), "Venta eliminada", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Ventas eliminadas", Toast.LENGTH_SHORT).show();
             })
             .setNegativeButton("Cancelar", null).show();
+    }
+
+    private void refrescarTodo() {
+        cargarDatos();
+        if (getActivity() != null) {
+            ViewPager2 vp = getActivity().findViewById(R.id.viewPager);
+            if (vp != null && vp.getAdapter() != null) {
+                vp.getAdapter().notifyDataSetChanged();
+            }
+        }
     }
 
     @Override

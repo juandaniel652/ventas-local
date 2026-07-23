@@ -10,8 +10,8 @@ android {
         applicationId "com.tuapp.stockapp"
         minSdk 24
         targetSdk 34
-        versionCode 3          // <-- Cambiado de 1 a 3
-        versionName "1.2.0"    // <-- Cambiado de 1.0.0 a 1.2.0
+        versionCode 4          // <-- Cambiado de 1 a 3
+        versionName "1.2.1"    // <-- Cambiado de 1.0.0 a 1.2.0
     }
     
     buildTypes {
