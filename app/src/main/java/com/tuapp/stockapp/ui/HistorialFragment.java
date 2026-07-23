@@ -67,12 +67,12 @@ public class HistorialFragment extends Fragment {
             } while (c.moveToNext());
         }
         c.close();
-
+    
         if (concatenatedIds.isEmpty()) {
             cargarDatos();
             return;
         }
-
+    
         String fechaFormateada = fechaIso;
         try {
             java.text.SimpleDateFormat formatoEntrada = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
@@ -91,30 +91,36 @@ public class HistorialFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // Crear diálogo personalizado para soportar click corto (1 unidad) y largo (todo)
+    
+        // Creamos un TextView programmaticamente para las instrucciones de uso sin tapar la lista
+        android.widget.TextView tvInstrucciones = new android.widget.TextView(requireContext());
+        tvInstrucciones.setText("💡 Tocá para restar 1 ud. | Mantene presionado para borrar todo");
+        tvInstrucciones.setTextSize(12);
+        tvInstrucciones.setPadding(50, 20, 50, 10);
+        tvInstrucciones.setTextColor(android.graphics.Color.GRAY);
+    
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, labels);
         
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
-        .setTitle("Ventas del " + fechaFormateada)
-        .setMessage("Tap: Descuenta 1 ud. | Mantené presionado: Borra todo")
-        .setAdapter(adapter, null)
-        .setNegativeButton("Cerrar", null)
-        .create();
-
+            .setTitle("Ventas del " + fechaFormateada)
+            .setCustomTitle(tvInstrucciones) // Coloca las instrucciones arriba sin bloquear el adapter
+            .setAdapter(adapter, null)
+            .setNegativeButton("Cerrar", null)
+            .create();
+    
         dialog.setOnShowListener(d -> {
             dialog.getListView().setOnItemClickListener((parent, view, position, id) -> {
                 dialog.dismiss();
                 descontarUnaUnidad(concatenatedIds.get(position), fechaIso);
             });
-
+        
             dialog.getListView().setOnItemLongClickListener((parent, view, position, id) -> {
                 dialog.dismiss();
                 anularVentaCompleta(concatenatedIds.get(position), fechaIso);
                 return true;
             });
         });
-
+    
         dialog.show();
     }
 
