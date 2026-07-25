@@ -20,3 +20,5 @@ ventas-local/mi-clave.jks
 ventas-local/maxi.keystoreapp/mi-clave.jks
 app/mi-clave.jks
 app/mi-clave.jks
+.gradle/
+.gradle/
